@@ -1,7 +1,10 @@
+// tools.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "tools.h"
+
 
 void read_bmp_row_by_row(FILE* file, BMP_Image* bmp){ // Что делаем? Читаем пиксели и разворачиваем, а надо ли это? да наверное, посмотрим...
     
@@ -20,21 +23,19 @@ void read_bmp_row_by_row(FILE* file, BMP_Image* bmp){ // Что делаем? Ч
         free(bmp->data);
         free(bmp);
         fclose(file);
-        return NULL;
+        exit(EXIT_FAILURE);
     }
 
     while (row_written < bmp->dib_header.height){
         fread(row, row_size + row_padding, 1, file); // Чтение строк из файла
         if (bytes_per_pixel == 3){
             for (int i = 0; i < row_size; i += bytes_per_pixel){ // Читаем по 3 байта из строки и меняем местами
-                *p = row[i + 3]; p++; // Движемся по элементам последней строки из переменной data и помещаем туда развернутые тройки, байт, из строки, которая была считана из файла
-                *p = row[i + 2]; p++;
+                *p = row[i + 2]; p++; // Движемся по элементам последней строки из переменной data и помещаем туда развернутые тройки, байт, из строки, которая была считана из файла
                 *p = row[i + 1]; p++;
                 *p = row[i];     p++;
             }
         } else if(bytes_per_pixel == 4){
             for (int i = 0; i < row_size; i += bytes_per_pixel){ // Читаем по 4 байта из строки и меняем местами, по идее хватит и 3, у нас же ргб просто
-                *p = row[i + 4]; p++;
                 *p = row[i + 3]; p++;
                 *p = row[i + 2]; p++;
                 *p = row[i + 1]; p++;
@@ -124,9 +125,6 @@ BMP_Image* parse_bmp_image(const char* image_name) {
         return NULL;
     }
 
-    read_bmp_row_by_row(file, bmp); // little-endian
-
-    #if 0 // big-endian
     // Выделяем память под данные пикселей
     bmp->data = malloc(bmp->dib_header.raw_bitmap_data);
     if (!bmp->data) {
@@ -135,6 +133,10 @@ BMP_Image* parse_bmp_image(const char* image_name) {
         fclose(file);
         return NULL;
     }
+
+    read_bmp_row_by_row(file, bmp); // little-endian
+
+    #if 0 // big-endian
 
     // Переходим к началу данных пикселей
     if (fseek(file, bmp->bmp_header.pixel_offset, SEEK_SET) != 0) {
@@ -158,4 +160,16 @@ BMP_Image* parse_bmp_image(const char* image_name) {
 
     fclose(file);
     return bmp;
+}
+
+// Функция освобождения памяти
+void free_bmp_image(BMP_Image* bmp_image) {
+    if (!bmp_image) return;
+
+    if (bmp_image->data) {
+        free(bmp_image->data);
+        bmp_image->data = NULL;
+    }
+
+    free(bmp_image);
 }

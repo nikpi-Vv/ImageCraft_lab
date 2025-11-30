@@ -1,3 +1,5 @@
+// bmp_editor.c
+
 #include <stdio.h>
 #include "tools.h"
 
@@ -17,12 +19,14 @@ int main(int argn, char *argc[]){
     printf("Bit depth: %d\n", bmp_image->dib_header.bit_per_pixel);
     printf("Pixel data size: %u bytes\n", bmp_image->dib_header.raw_bitmap_data);
 
-    for (int i = 0; i < bmp_image->dib_header.raw_bitmap_data; i++){
-        if (i == bmp_image->dib_header.width){
+    int data_size = bmp_image->dib_header.height * bmp_image->dib_header.width * bmp_image->dib_header.bit_per_pixel / 8; 
+    for (int i = 0; i < data_size; i++){
+        if (i == bmp_image->dib_header.width * 3){
             printf("\n");
         }
-        printf("%04x ", bmp_image->data[i]);
+        printf("%02x ", (unsigned char) bmp_image->data[i]);
     }
+
     free_bmp_image(bmp_image);
     return 0;
 }
