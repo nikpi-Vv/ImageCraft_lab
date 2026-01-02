@@ -1,7 +1,7 @@
-// tools.h
+// bmp_tools.h
 
-#ifndef TOOLS_H
-#define TOOLS_H
+#ifndef BMP_TOOLS_H
+#define BMP_TOOLS_H
 
 #pragma pack(1) // Выравнивание структур
 

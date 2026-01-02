@@ -29,4 +29,4 @@ int main(int argn, char *argc[]){
 
     free_bmp_image(bmp_image);
     return 0;
-}
+}   
