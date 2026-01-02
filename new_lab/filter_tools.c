@@ -6,7 +6,7 @@ int parse_filters(int argc, char* argv[], int start, FilterNode** out_head) {
     *out_head = NULL;
     FilterNode* tail = NULL;
 
-    for (int i = start; i < argc; i++) {
+    for (int i = start; i < argc; ) {
         const char* token = argv[i];
         if (token[0] != '-') {
             printf("Error: expected filter name starting with '-', got '%s'\n", token);
@@ -22,7 +22,7 @@ int parse_filters(int argc, char* argv[], int start, FilterNode** out_head) {
         else if (strcmp(name, "edge") == 0 || strcmp(name, "crystallize") == 0 ||
                 strcmp(name, "glass") == 0 || strcmp(name, "blur") == 0 ||
                 strcmp(name, "med") == 0) expected_params = 1;
-        else if (strcmp(name, "gs") == 0 ||
+        else if (strcmp(name, "gs") == 0 ||ы
                  strcmp(name, "neg") == 0 ||
                  strcmp(name, "sharp") == 0) {
             expected_params = 0;
@@ -105,7 +105,6 @@ int parse_filters(int argc, char* argv[], int start, FilterNode** out_head) {
     return 1;
 }
 
-
 char* string_duplicate(const char* s) {
     if (!s) return NULL;
     size_t len = strlen(s) + 1;
@@ -114,63 +113,6 @@ char* string_duplicate(const char* s) {
         memcpy(copy, s, len);
     }
     return copy;
-}
-
-
-int write_bmp_image(const char* output_path, BMP_Image* img) {
-    if (!output_path || !img || !img->data) {
-        fprintf(stderr, "Invalid arguments to write_bmp_image\n");
-        return -1;
-    }
-
-    // Пересчитываем размер данных с учётом выравнивания
-    int bytes_per_pixel = 3;
-    int row_size = img->dib_header.width * bytes_per_pixel;
-    int row_padding = (4 - (row_size % 4)) % 4;
-    int padded_row_size = row_size + row_padding;
-    unsigned int data_size = padded_row_size * img->dib_header.height;
-    img->dib_header.raw_bitmap_data = data_size;
-    img->bmp_header.size_of_file = sizeof(BMP_Header) + sizeof(DIB_Header) + data_size;
-
-    FILE* f = fopen(output_path, "wb");
-    if (!f) {
-        perror("Failed to open output file");
-        return -1;
-    }
-
-    // Записываем заголовки
-    fwrite(&img->bmp_header, sizeof(BMP_Header), 1, f);
-    fwrite(&img->dib_header, sizeof(DIB_Header), 1, f);
-
-    // Записываем данные построчно с выравниванием
-    unsigned char* padding = calloc(1, row_padding);
-    if (!padding) {
-        fclose(f);
-        return -1;
-    }
-
-    unsigned char* row = malloc(padded_row_size);
-    if (!row) {
-        free(padding);
-        fclose(f);
-        return -1;
-    }
-
-    // BMP хранит строки **снизу вверх**
-    for (int y = img->dib_header.height - 1; y >= 0; y--) {
-        // Копируем строку из data
-        memcpy(row, img->data + y * row_size, row_size);
-        // Добавляем паддинг
-        if (row_padding > 0) {
-            memcpy(row + row_size, padding, row_padding);
-        }
-        fwrite(row, 1, padded_row_size, f);
-    }
-
-    free(row);
-    free(padding);
-    fclose(f);
-    return 0;
 }
 
 // Создание нового узла фильтра
