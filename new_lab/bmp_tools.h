@@ -46,7 +46,19 @@ typedef struct BMP_Image{
 
 #pragma pop
 
+// Загружает BMP изображение из файла, возвращает структуру или NULL при ошибке
 BMP_Image* parse_bmp_image(const char* image_name);
+// Освобождает память изображения (данные и структуру)
 void free_bmp_image(BMP_Image* bmp_image);
+
+// Конвертация между форматами хранения
+void parse_pixel_data(BMP_Image* img);      // data -> pixel_data
+void serialize_pixel_data(BMP_Image* img);  // pixel_data -> data
+
+// Сохранение изображения
+int save_bmp_image(const char* filename, BMP_Image* img);
+
+// Вспомогательные функции
+void update_bmp_headers(BMP_Image* img);  
 
 #endif
