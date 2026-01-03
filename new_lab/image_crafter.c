@@ -30,7 +30,13 @@ int main(int argc, char* argv[]) {
     const char* input_path = argv[1];
     const char* output_path = argv[2];
 
-    BMP_Image* img = NULL;
+     // Загрузка изображения
+    BMP_Image* img = parse_bmp_image(input_path);
+    if (!img) {
+        printf("Failed to load input image: %s\n", input_path);
+        return 1;
+    }
+    //BMP_Image* img = NULL;
     // if (!validate_and_load_image(input_path, &img)) { // Функция под вопросом, может и надо, пользователь дебил
     //     return 1;
     // }
@@ -45,9 +51,18 @@ int main(int argc, char* argv[]) {
     apply_filters(img, filter_list);
 
     // TODO: save_output_image(output_path, img);
+    // Сохранение результата
+    if (!save_bmp_image(output_path, img)) {
+        printf("Failed to save output image: %s\n", output_path);
+        free_filter_list(filter_list);
+        free_bmp_image(img);
+        return 1;
+    }
 
     free_filter_list(filter_list);
     free_bmp_image(img);
+
+    printf("Successfully processed image: %s -> %s\n", input_path, output_path);
     return 0;
 }
 
