@@ -1,5 +1,5 @@
 // filters.c
-
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -173,6 +173,10 @@ void filter_edge(BMP_Image* img, double threshold) {
     img->pixel_data.pixels = dst;
 }
 
+static int compare_ints(const void* a, const void* b) {
+    return (*(const int*)a - *(const int*)b);
+}
+
 void filter_median(BMP_Image* img, int window) {
     int w = img->pixel_data.width;
     int h = img->pixel_data.height;
@@ -203,9 +207,13 @@ void filter_median(BMP_Image* img, int window) {
                 }
             }
             // Сортируем
-            qsort(r_vals, idx, sizeof(int), (int (*)(const void*, const void*)) strcmp);
-            qsort(g_vals, idx, sizeof(int), (int (*)(const void*, const void*)) strcmp);
-            qsort(b_vals, idx, sizeof(int), (int (*)(const void*, const void*)) strcmp);
+            //qsort(r_vals, idx, sizeof(int), (int (*)(const void*, const void*)) strcmp);
+            //qsort(g_vals, idx, sizeof(int), (int (*)(const void*, const void*)) strcmp);
+            //qsort(b_vals, idx, sizeof(int), (int (*)(const void*, const void*)) strcmp);
+            qsort(r_vals, idx, sizeof(int), compare_ints);
+            qsort(g_vals, idx, sizeof(int), compare_ints);
+            qsort(b_vals, idx, sizeof(int), compare_ints);
+            
             dst[y * w + x].r = (unsigned char)r_vals[idx / 2];
             dst[y * w + x].g = (unsigned char)g_vals[idx / 2];
             dst[y * w + x].b = (unsigned char)b_vals[idx / 2];
