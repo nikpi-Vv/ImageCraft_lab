@@ -22,7 +22,7 @@ int parse_filters(int argc, char* argv[], int start, FilterNode** out_head) {
         else if (strcmp(name, "edge") == 0 || strcmp(name, "crystallize") == 0 ||
                 strcmp(name, "glass") == 0 || strcmp(name, "blur") == 0 ||
                 strcmp(name, "med") == 0) expected_params = 1;
-        else if (strcmp(name, "gs") == 0 ||ы
+        else if (strcmp(name, "gs") == 0 ||
                  strcmp(name, "neg") == 0 ||
                  strcmp(name, "sharp") == 0) {
             expected_params = 0;
