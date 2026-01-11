@@ -36,9 +36,9 @@ static unsigned short read_uint16(unsigned char* data) {
 }
 
 // Функция для чтения little-endian чисел (16-битные знаковые)
-static short read_int16(unsigned char* data) {
-    return data[0] | (data[1] << 8);
-}
+//static short read_int16(unsigned char* data) {
+//    return data[0] | (data[1] << 8);
+//}
 
 // ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
 

@@ -171,11 +171,11 @@ void filter_edge(BMP_Image* img, double threshold) {
     img->pixel_data.pixels = dst;
 }
 
-static int compare_uchar(const void* a, const void* b) {
-    unsigned char ia = *(const unsigned char*)a;
-    unsigned char ib = *(const unsigned char*)b;
-    return (ia > ib) - (ia < ib);
-}
+//static int compare_uchar(const void* a, const void* b) {
+//    unsigned char ia = *(const unsigned char*)a;
+//    unsigned char ib = *(const unsigned char*)b;
+//    return (ia > ib) - (ia < ib);
+//}
 
 void filter_median(BMP_Image* img, int window) {
     if (!img || !img->pixel_data.pixels || window < 1) return;
