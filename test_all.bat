@@ -68,9 +68,27 @@ echo ==== 10. Огромный window для median ====
 %EXE% in.bmp med_big.bmp -med 999
 echo.
 
-echo ==== 14. Очень широкие/высокие картинки ====
-if exist wide.bmp   %EXE% wide.bmp   wide_blur.bmp   -blur 5
-if exist tall.bmp   %EXE% tall.bmp   tall_med.bmp    -med 5
+echo ==== 11. Mosaic с цепочкой фильтров (если есть CIFAR) ====
+if exist cifar-100-binary\train.bin (
+    %EXE% small32.bmp  mosaic_chain32.bmp  -sharp -mosaic_cifar -gs
+    %EXE% small64.bmp  mosaic_chain64.bmp  -crop 40 40 -mosaic_cifar -blur 2
+) else (
+    echo WARNING: cifar-100-binary/train.bin not found, пропускаю сложные mosaic-тесты.
+)
+echo.
+
+echo ==== 12. Перепутанные input/output ====
+%EXE% tiny.bmp out.bmp -gs
+%EXE% out.bmp in.bmp -gs
+echo.
+
+echo ==== 13. Лишние аргументы после выходного файла ====
+%EXE% tiny.bmp in.bmp foo bar baz
+echo.
+
+echo ==== 14. Очень узкие/маленькие картинки (если есть) ====
+if exist wide.bmp   %EXE% wide.bmp   wide_blur.bmp    -blur 5
+if exist tall.bmp   %EXE% tall.bmp   tall_med.bmp     -med 5
 if exist oddpad.bmp %EXE% oddpad.bmp oddpad_sharp.bmp -sharp
 echo.
 
@@ -88,19 +106,22 @@ echo ==== 16. Многократные realloc-сценарии ====
   -med 11 -blur 5 -crystallize 4 -glass 2
 echo.
 
-echo ==== 17. Большое изображение по памяти ====
+echo ==== 17. Большое изображение по памяти (опционально) ====
 if exist big.bmp (
     %EXE% big.bmp big_blur.bmp -blur 3
 ) else (
-    echo WARNING: big.bmp not found, пропускаю memory-тест.
+    echo WARNING: big.bmp not found, memory-тест пропущен.
 )
 echo.
 
-echo ==== 18. Повреждённые заголовки BMP ====
-if exist corrupt_size.bmp  %EXE% corrupt_size.bmp  out_corrupt_size.bmp -gs
-if exist corrupt_data.bmp  %EXE% corrupt_data.bmp  out_corrupt_data.bmp -gs
+echo ==== 18. Повреждённые заголовки BMP (опционально) ====
+if exist corrupt_size.bmp (
+    %EXE% corrupt_size.bmp out_corrupt_size.bmp -gs
+)
+if exist corrupt_data.bmp (
+    %EXE% corrupt_data.bmp out_corrupt_data.bmp -gs
+)
 echo.
-
 
 echo ==== Все тесты выполнены ====
 pause
