@@ -1,7 +1,8 @@
 ***ImageCraft*** - это консольная программа на языке C, предназначенная для применения цепочки графических фильтров к 24-битным BMP-изображениям без сжатия.
 
 Для компиляции gcc -o ic.exe image_crafter.c bmp_tools.c filter_tools.c filters.c -Im \
-Для мозайки скачать CIFAR-100 binary version (suitable for C programs) - https://www.cs.toronto.edu/~kriz/cifar.html
+Для мозайки скачать CIFAR-100 binary version (suitable for C programs) - https://www.cs.toronto.edu/~kriz/cifar.html \
+Формат команды в командной строке: ./<exe_file> <input_file> <output_file> <filter_1> <filter_>...
 
 ***Структура проекта***
 
