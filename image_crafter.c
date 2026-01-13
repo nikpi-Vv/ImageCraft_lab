@@ -18,8 +18,15 @@ void print_usage(const char* program_name) {
     printf("  -blur <sigma>\n");
     printf("  -glass <radius>\n");
     printf("  -crystallize <cell size>\n");
-    printf("  -unsharp_mask <amount>\n");
-    printf("  -mosaic_cifar replace tiles with random CIFAR-100 images (requires 32x32)\n");
+    printf("  -mosaic replace tiles with random CIFAR-100 images (requires 32x32)\n");
+}
+
+static unsigned char is_bmp_file(const char* filename) {
+    if (!filename) return 0;
+    size_t len = strlen(filename);
+    if (len < 4) return 0;
+    const char* ext = filename + len - 4;
+    return (strcasecmp(ext, ".bmp") == 0);
 }
 
 int main(int argc, char* argv[]) {
@@ -30,6 +37,15 @@ int main(int argc, char* argv[]) {
 
     const char* input_path = argv[1];
     const char* output_path = argv[2];
+
+    if (!is_bmp_file(input_path)) {
+        printf("Error: Input file must have '.bmp' extension.\n");
+        return 1;
+    }
+    if (!is_bmp_file(output_path)) {
+        printf("Error: Output file must have '.bmp' extension.\n");
+        return 1;
+    }
 
     // Загрузка изображения
     BMP_Image* img = parse_bmp_image(input_path);

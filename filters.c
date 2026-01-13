@@ -35,8 +35,8 @@ void apply_filters(BMP_Image* img, FilterNode* filters) {
         } else if (strcmp(f->name, "glass") == 0) {
             double r = f->params[0];
             filter_glass(img, r);
-        } else if (strcmp(f->name, "mosaic_cifar") == 0) {
-            filter_mosaic_cifar(img);
+        } else if (strcmp(f->name, "mosaic") == 0) {
+            filter_mosaic(img);
         } else {
             printf("Warning: unknown filter '%s' skipped\n", f->name);
         }
@@ -170,12 +170,6 @@ void filter_edge(BMP_Image* img, double threshold) {
     free(img->pixel_data.pixels);
     img->pixel_data.pixels = dst;
 }
-
-//static int compare_uchar(const void* a, const void* b) {
-//    unsigned char ia = *(const unsigned char*)a;
-//    unsigned char ib = *(const unsigned char*)b;
-//    return (ia > ib) - (ia < ib);
-//}
 
 void filter_median(BMP_Image* img, int window) {
     if (!img || !img->pixel_data.pixels || window < 1) return;
@@ -517,7 +511,7 @@ typedef struct {
     int index;              // индекс в датасете
 } TileInfo;
 
-CIFAR_Dataset* load_cifar_dataset(const char* filename) {
+CIFAR_Dataset* load_dataset(const char* filename) {
     FILE* f = fopen(filename, "rb");
     if (!f) return NULL;
 
@@ -550,7 +544,7 @@ CIFAR_Dataset* load_cifar_dataset(const char* filename) {
     return ds;
 }
 
-void free_cifar_dataset(CIFAR_Dataset* ds) {
+void free_dataset(CIFAR_Dataset* ds) {
     if (ds) {
         free(ds->data);
         free(ds);
@@ -565,10 +559,10 @@ static double color_distance(unsigned char r1, unsigned char g1, unsigned char b
     return dr*dr + dg*dg + db*db; // квадрат расстояния — быстрее sqrt
 }
 
-void filter_mosaic_cifar(BMP_Image* img) {
+void filter_mosaic(BMP_Image* img) {
 
     // Загружаем датасет
-    CIFAR_Dataset* ds = load_cifar_dataset("cifar-100-binary/train.bin");
+    CIFAR_Dataset* ds = load_dataset("cifar-100-binary/train.bin");
     if (!ds) {
         printf("Error: failed to load cifar-100-binary/train.bin\n");
         return;
@@ -579,14 +573,14 @@ void filter_mosaic_cifar(BMP_Image* img) {
     Pixel* src = img->pixel_data.pixels;
     Pixel* dst = malloc(w * h * sizeof(Pixel));
     if (!dst) {
-        free_cifar_dataset(ds);
+        free_dataset(ds);
         return;
     }
 
     // Предвычисляем средние цвета всех тайлов
     TileInfo* tiles = malloc(ds->count * sizeof(TileInfo));
     if (!tiles) {
-        free_cifar_dataset(ds);
+        free_dataset(ds);
         free(dst);
         return;
     }
@@ -662,5 +656,5 @@ void filter_mosaic_cifar(BMP_Image* img) {
     img->pixel_data.pixels = dst;
 
     free(tiles);
-    free_cifar_dataset(ds);
+    free_dataset(ds);
 }

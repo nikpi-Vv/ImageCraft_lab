@@ -33,7 +33,7 @@ int parse_filters(int argc, char* argv[], int start, FilterNode** out_head) {
         else if (strcmp(name, "gs") == 0 ||
                  strcmp(name, "neg") == 0 ||
                  strcmp(name, "sharp") == 0 ||
-                 strcmp(name, "mosaic_cifar") == 0) {
+                 strcmp(name, "mosaic") == 0) {
             expected_params = 0;
         } else {
             printf("Unknown filter: %s\n", token);

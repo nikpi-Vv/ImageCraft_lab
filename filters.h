@@ -35,6 +35,6 @@ void filter_glass(BMP_Image* img, double radius);
 void filter_crystallize(BMP_Image* img, int cell_size);
 
 // Собирает исходное изображение из маленьких картинок (CIFAR-100), подбирая их по среднему цвету блока.
-void filter_mosaic_cifar(BMP_Image* img);
+void filter_mosaic(BMP_Image* img);
 
 #endif
